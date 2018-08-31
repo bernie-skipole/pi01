@@ -2,8 +2,8 @@
 "url": "/",
 "default_language": "en",
 "brief": "Raspberry Pi 01",
-"version": "0.2.0",
-"skipole": "1.0.0",
+"version": "0.2.1",
+"skipole": "1.0.1",
 "subprojects": {
 "lib": {
 "path": "/lib/"
@@ -11,7 +11,7 @@
 },
 "specialpages": {
 "control": 3,
-"control_results_json": 13,
+"controls_refresh": 13,
 "general_json": 2006,
 "home": 1,
 "information": 4,
@@ -19,6 +19,7 @@
 "no_javascript": "lib,no_javascript",
 "redirector": "lib,redirector",
 "sensors": 2,
+"sensors_refresh": 9,
 "server_error": "lib,server_error",
 "set_output01": 3001,
 "set_output01_json": 3002,
@@ -333,7 +334,7 @@
 "set_output_from_browser"
 ],
 "submit_option": true,
-"target_ident": "control_results_json",
+"target_ident": "controls_refresh",
 "validate_fail_ident": null,
 "validate_option": false
 },
@@ -358,7 +359,7 @@
 "show_backcol": false,
 "last_scroll": true,
 "interval": 10,
-"interval_target": 13,
+"interval_target": "controls_refresh",
 "lang": "en",
 "backcol": "#ffffff",
 "default_error_widget": [
@@ -1522,7 +1523,7 @@
 "show_backcol": false,
 "last_scroll": true,
 "interval": 5,
-"interval_target": 9,
+"interval_target": "sensors_refresh",
 "lang": "en",
 "backcol": "#ffffff",
 "default_error_widget": [
@@ -2601,22 +2602,6 @@
 "original_fields": {}
 }
 },
-"control_results.json": {
-"ident": 13,
-"brief": "Returns JSON file to refresh the results on the control page",
-"RespondPage": {
-"class": "SubmitData",
-"original_args": {
-"fail_ident": "general_json",
-"submit_list": [
-"control",
-"refresh_results"
-],
-"target_ident": "general_json"
-},
-"original_fields": {}
-}
-},
 "controls.json": {
 "ident": 6,
 "brief": "Returns JSON dictionary of sensors as external api",
@@ -2628,6 +2613,22 @@
 "control",
 "controls_json_api"
 ]
+},
+"original_fields": {}
+}
+},
+"controls_refresh": {
+"ident": 13,
+"brief": "refreshes comtrols page",
+"RespondPage": {
+"class": "SubmitData",
+"original_args": {
+"fail_ident": "general_json",
+"submit_list": [
+"control",
+"refresh_results"
+],
+"target_ident": "general_json"
 },
 "original_fields": {}
 }
@@ -2692,7 +2693,7 @@
 },
 "sensors_refresh": {
 "ident": 9,
-"brief": "Refreshes page",
+"brief": "Refreshes sensors page",
 "RespondPage": {
 "class": "SubmitData",
 "original_args": {
@@ -2736,32 +2737,6 @@
 "target_ident": 4501
 },
 "original_fields": {}
-}
-},
-"show_server_error": {
-"ident": 560,
-"brief": "Displays the server error page",
-"RespondPage": {
-"class": "PageData",
-"original_args": {
-"target_ident": "server_error"
-},
-"original_fields": {
-"show_error": "Example server error message"
-}
-}
-},
-"show_validate_error": {
-"ident": 550,
-"brief": "Displays the validate error page",
-"RespondPage": {
-"class": "PageData",
-"original_args": {
-"target_ident": "validate_error"
-},
-"original_fields": {
-"show_error": "Example validate error message"
-}
 }
 }
 }
