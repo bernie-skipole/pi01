@@ -1,4 +1,7 @@
 
+
+from collections import namedtuple
+
 # _OUTPUTS
 
 # This dictionary has keys output names, and values being a tuple of (type, value, onpower, BCM number, description)
@@ -7,9 +10,13 @@
 # onpower is True if the 'default value' is to be set on power up, or False if last recorded value is to be used
 # BCM number is the appropriate BCM pin number, or None if not relevant
 
+
+Output = namedtuple('Output', ['type', 'value', 'onpower', 'BCM', 'description'])
+
+
 # Currently only one output 'output01' on BCM 24 is defined
 
-_OUTPUTS = {"output01" : ('boolean', False, True, 24, "Output pin BCM 24")}
+_OUTPUTS = {"output01" : Output('boolean', False, True, 24, "Output pin BCM 24")}
 
 
 # _INPUTS
@@ -19,12 +26,15 @@ _OUTPUTS = {"output01" : ('boolean', False, True, 24, "Output pin BCM 24")}
 # pud, pull up down is True for pull up, False for pull down, None if not relevant
 # BCM number is the appropriate BCM pin number, or None if not relevant
 
+Input = namedtuple('Input', ['type', 'pud', 'BCM', 'description'])
+
 # Currently two inputs are defined
 # 'input01' is the input on BCM 23
 # 'input02' is the server time
 
-_INPUTS = {"input01" : ('boolean', True, 23, "Input pin BCM 23"),
-           "input02" : ('text', None, None, "Server time")           
+
+_INPUTS = {"input01" : Input('boolean', True, 23, "Input pin BCM 23"),
+           "input02" : Input('text', None, None, "Server time")           
           }
 
 
@@ -44,24 +54,24 @@ def initial_setup_outputs():
     if not _gpio_control:
         return False
     GPIO.setmode(GPIO.BCM)             # choose BCM or BOARD
-    for bcm in _OUTPUTS.values():
+    for oput in _OUTPUTS.values():
         # set outputs
-        if bcm[3] is not None: 
-            GPIO.setup(bcm[3], GPIO.OUT)
-    for bcm in _INPUTS.values():
+        if oput.BCM is not None: 
+            GPIO.setup(oput.BCM, GPIO.OUT)
+    for iput in _INPUTS.values():
         # set inputs
-        if bcm[2] is not None:
-            if bcm[1]:
-                GPIO.setup(bcm[2], GPIO.IN, pull_up_down = GPIO.PUD_UP)
+        if iput.BCM is not None:
+            if iput.pud:
+                GPIO.setup(iput.BCM, GPIO.IN, pull_up_down = GPIO.PUD_UP)
             else:
-                GPIO.setup(bcm[2], GPIO.IN, pull_up_down = GPIO.PUD_DOWN)
+                GPIO.setup(iput.BCM, GPIO.IN, pull_up_down = GPIO.PUD_DOWN)
 
 
 def get_output_names():
     "Returns list of output names, the list is sorted by boolean, integer and text items, and in name order within these categories"
-    bool_list = sorted(name for name in _OUTPUTS if _OUTPUTS[name][0] == 'boolean')
-    int_list =  sorted(name for name in _OUTPUTS if _OUTPUTS[name][0] == 'integer')
-    text_list = sorted(name for name in _OUTPUTS if _OUTPUTS[name][0] == 'text')
+    bool_list = sorted(name for name in _OUTPUTS if _OUTPUTS[name].type == 'boolean')
+    int_list =  sorted(name for name in _OUTPUTS if _OUTPUTS[name].type == 'integer')
+    text_list = sorted(name for name in _OUTPUTS if _OUTPUTS[name].type == 'text')
     controls_list = []
     if bool_list:
         controls_list.extend(bool_list)
@@ -79,13 +89,13 @@ def get_outputs():
 def get_output_description(name):
     "Given an output name, returns the output description, or None if the name is not found"
     if name in _OUTPUTS:
-        return _OUTPUTS[name][4]
+        return _OUTPUTS[name].description
 
 
 def get_output_type(name):
     "Given an output name, returns the output type, or None if the name is not found"
     if name in _OUTPUTS:
-        return _OUTPUTS[name][0]
+        return _OUTPUTS[name].type
 
 
 def get_boolean_output(name):
@@ -94,9 +104,9 @@ def get_boolean_output(name):
         return
     if name not in _OUTPUTS:
         return
-    if _OUTPUTS[name][0] != 'boolean':
+    if _OUTPUTS[name].type != 'boolean':
         return
-    return bool(GPIO.input(_OUTPUTS[name][3]))
+    return bool(GPIO.input(_OUTPUTS[name].BCM))
 
 
 def set_boolean_output(name, value):
@@ -105,21 +115,21 @@ def set_boolean_output(name, value):
         return
     if name not in _OUTPUTS:
         return
-    if _OUTPUTS[name][0] != 'boolean':
+    if _OUTPUTS[name].type != 'boolean':
         return
     if value:
-        GPIO.output(_OUTPUTS[name][3], 1)
+        GPIO.output(_OUTPUTS[name].BCM, 1)
     else:
-        GPIO.output(_OUTPUTS[name][3], 0)
+        GPIO.output(_OUTPUTS[name].BCM, 0)
 
 
 
 def get_input_names():
     "Returns list of input names, the list is sorted by boolean, integer, float and text items, and in name order within these categories"
-    bool_list = sorted(name for name in _INPUTS if _INPUTS[name][0] == 'boolean')
-    int_list =  sorted(name for name in _INPUTS if _INPUTS[name][0] == 'integer')
-    float_list =  sorted(name for name in _INPUTS if _INPUTS[name][0] == 'float')
-    text_list = sorted(name for name in _INPUTS if _INPUTS[name][0] == 'text')
+    bool_list = sorted(name for name in _INPUTS if _INPUTS[name].type == 'boolean')
+    int_list =  sorted(name for name in _INPUTS if _INPUTS[name].type == 'integer')
+    float_list =  sorted(name for name in _INPUTS if _INPUTS[name].type == 'float')
+    text_list = sorted(name for name in _INPUTS if _INPUTS[name].type == 'text')
     sensors_list = []
     if bool_list:
         sensors_list.extend(bool_list)
@@ -138,13 +148,13 @@ def get_inputs():
 def get_input_description(name):
     "Given an input name, returns the input description, or None if the name is not found"
     if name in _INPUTS:
-        return _INPUTS[name][3]
+        return _INPUTS[name].description
 
 
 def get_input_type(name):
     "Given an input name, returns the input type, or None if the name is not found"
     if name in _INPUTS:
-        return _INPUTS[name][0]
+        return _INPUTS[name].type
 
 
 def get_boolean_input(name):
@@ -153,20 +163,21 @@ def get_boolean_input(name):
         return
     if name not in _INPUTS:
         return
-    if _INPUTS[name][0] != 'boolean':
+    if _INPUTS[name].type != 'boolean':
         return
-    return bool(GPIO.input(_INPUTS[name][2]))
+    return bool(GPIO.input(_INPUTS[name].BCM))
 
 
 def get_text_input(name):
     "Returns text input for the appropriate input, or empty string if no text found"
     if name not in _INPUTS:
         return ''
-    if _INPUTS[name][0] != 'text':
+    if _INPUTS[name].type != 'text':
         return ''
     if name == "input02":
         # This input returns a time string
         return time.strftime("%c", time.gmtime())
+    # add further elifs for other text inputs
     return ''
 
 
@@ -174,7 +185,7 @@ def get_float_input(name):
     "Returns float input for the appropriate input, or None if no input found"
     if name not in _INPUTS:
         return
-    if _INPUTS[name][0] != 'float':
+    if _INPUTS[name].type != 'float':
         return
     # no float inputs yet defined
     return
@@ -185,9 +196,12 @@ def get_input_name(bcm):
     "Given a bcm number, returns the name"
     if bcm is None:
         return
-    for name, values in _INPUTS.items():
-        if values[2] == bcm:
+    for name, iput in _INPUTS.items():
+        if iput.BCM == bcm:
             return name
+
+
+# example object to trigger a callback function which you supply when an input changes
 
 
 class Listen(object):
@@ -221,23 +235,27 @@ class Listen(object):
         """This is the callback added to each pin, in turn it calls
            callbackfunction(name, userdata)"""
         name = get_input_name(channel)
+        # and call the callback function
         self.set_callback(name, self.userdata)
 
     def start_loop(self):
         "Sets up listenning threads"
         if not _gpio_control:
             return
-        for name, values in _INPUTS.items():
-            if (values[0] == 'boolean') and isinstance(values[2], int):
-                if values[1]:
+        for name, iput in _INPUTS.items():
+            if (iput.type == 'boolean') and isinstance(iput.BCM, int):
+                if iput.pud:
                     # True for pull up pin, therefore detect falling edge
-                    GPIO.add_event_detect(values[2], GPIO.FALLING, callback=self._pincallback, bouncetime=300)
+                    GPIO.add_event_detect(iput.BCM, GPIO.FALLING, callback=self._pincallback, bouncetime=300)
                 else:
-                    GPIO.add_event_detect(values[2], GPIO.RISING, callback=self._pincallback, bouncetime=300)
+                    GPIO.add_event_detect(iput.BCM, GPIO.RISING, callback=self._pincallback, bouncetime=300)
 
 
 
 ###  scheduled actions ###
+
+# event1 and event2 are example functions to be run 2 minutes past the hour and 32 minutes past the hour
+# these will be replaced by your own event functions.
 
 
 def event1(*args):
@@ -251,14 +269,12 @@ def event2(*args):
 
 
 
-
-
 ### scheduled actions to occur at set times each hour ###
 
 class ScheduledEvents(object):
 
     def __init__(self, *args):
-        "Stores the mqtt_clent and rconn and creates the schedule of hourly events"
+        "Used to create a schedule of events, each occuring at given minutes past the hour"
         # create a list of event callbacks and minutes past the hour for each event in turn
         self.event_list = [(event1, 2), (event2, 32)]
         self.args = args
