@@ -28,8 +28,8 @@ def start_project(project, projectfiles, path, option):
     """On a project being loaded, and before the wsgi service is started, this is called once,
        Note: it may be called multiple times if your web server starts multiple processes.
        This function should return a dictionary (typically an empty dictionary if this value is not used).
-       Can be used to set any initial parameters, and the dictionary returned will be passed as
-       'proj_data' to subsequent start_call functions."""
+       Can be used to set any initial parameters, and the dictionary returned will be set in the
+       'skicall.proj_data' attribute."""
     proj_data = {}
 
     # checks database exists, if not create it
@@ -56,43 +56,39 @@ def start_project(project, projectfiles, path, option):
     return proj_data
 
 
-def start_call(environ, path, project, called_ident, caller_ident, received_cookies, ident_data, lang, option, proj_data):
+def start_call(called_ident, skicall):
     "When a call is initially received this function is called."
-    call_data = {}
-    page_data = {}
     if not called_ident:
-        return None, call_data, page_data, lang
-    if environ.get('HTTP_HOST'):
+        return
+    if skicall.environ.get('HTTP_HOST'):
         # This is used in the information page to insert the host into a displayed url
-        call_data['HTTP_HOST'] = environ['HTTP_HOST']
+        skicall.call_data['HTTP_HOST'] = skicall.environ['HTTP_HOST']
     else:
-        call_data['HTTP_HOST'] = environ['SERVER_NAME']
-    # ensure project is in call_data
-    call_data['project'] = project
+        skicall.call_data['HTTP_HOST'] = skicall.environ['SERVER_NAME']
     # password protected pages
     if called_ident[1] not in _PUBLIC_PAGES:
         # check login
-        if not login.check_login(environ):
+        if not login.check_login(skicall.environ):
             # login failed, ask for a login
-            return (project,2010), call_data, page_data, lang
-    return called_ident, call_data, page_data, lang
+            return (skicall.project,2010)
+    return called_ident
 
 
 @use_submit_list
-def submit_data(caller_ident, ident_list, submit_list, submit_dict, call_data, page_data, lang):
+def submit_data(skicall):
     """This function is called when a Responder wishes to submit data for processing in some manner
        For two or more submit_list values, the decorator ensures the matching function is called instead"""
 
     raise FailPage("submit_list string not recognised")
 
 
-def end_call(page_ident, page_type, call_data, page_data, proj_data, lang):
+def end_call(page_ident, page_type, skicall):
     """This function is called at the end of a call prior to filling the returned page with page_data,
        it can also return an optional ident_data string to embed into forms."""
     # in this example, status is the value on input02
     status = hardware.get_text_input('input02')
     if status:
-        page_data['topnav','status', 'para_text'] = status
+        skicall.page_data['topnav','status', 'para_text'] = status
     else:
-        page_data['topnav','status', 'para_text'] = "Status: input02 unavailable"
+        skicall.page_data['topnav','status', 'para_text'] = "Status: input02 unavailable"
     return
