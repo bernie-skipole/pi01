@@ -2,8 +2,8 @@
 "url": "/",
 "default_language": "en",
 "brief": "Raspberry Pi 01",
-"version": "0.2.1",
-"skipole": "1.0.1",
+"version": "0.3.0",
+"skipole": "2.0.0",
 "subprojects": {
 "lib": {
 "path": "/lib/"
@@ -654,6 +654,7 @@
 "action_json": "set_output01_json",
 "button_class": "w3-button w3-theme-d4",
 "button_text": "Submit",
+"button_wait_text": "",
 "clear_error": false,
 "container_class": "",
 "div_class": "",
@@ -1491,6 +1492,7 @@
 "RespondPage": {
 "class": "SubmitData",
 "original_args": {
+"allowed_callers": [],
 "fail_ident": 1,
 "submit_list": [
 "login",
@@ -1815,6 +1817,7 @@
 "RespondPage": {
 "class": "SubmitData",
 "original_args": {
+"allowed_callers": [],
 "fail_ident": "general_json",
 "submit_list": [
 "setup",
@@ -2108,6 +2111,7 @@
 "action_json": "",
 "button_class": "w3-button w3-theme-d4",
 "button_text": "Submit",
+"button_wait_text": "",
 "clear_error": false,
 "container_class": "",
 "div_class": "",
@@ -2391,6 +2395,7 @@
 "action_json": 4004,
 "button_class": "w3-button w3-theme-d4",
 "button_text": "Submit",
+"button_wait_text": "",
 "clear_error": false,
 "container_class": "",
 "div_class": "",
@@ -2592,6 +2597,7 @@
 "RespondPage": {
 "class": "SubmitData",
 "original_args": {
+"allowed_callers": [],
 "fail_ident": "home",
 "submit_list": [
 "control",
@@ -2623,6 +2629,7 @@
 "RespondPage": {
 "class": "SubmitData",
 "original_args": {
+"allowed_callers": [],
 "fail_ident": "general_json",
 "submit_list": [
 "control",
@@ -2650,6 +2657,7 @@
 "RespondPage": {
 "class": "SubmitData",
 "original_args": {
+"allowed_callers": [],
 "fail_ident": "home",
 "submit_list": [
 "information",
@@ -2666,6 +2674,7 @@
 "RespondPage": {
 "class": "SubmitData",
 "original_args": {
+"allowed_callers": [],
 "fail_ident": "home",
 "submit_list": [
 "sensors",
@@ -2697,6 +2706,7 @@
 "RespondPage": {
 "class": "SubmitData",
 "original_args": {
+"allowed_callers": [],
 "fail_ident": "general_json",
 "submit_list": [
 "sensors",
@@ -2729,6 +2739,7 @@
 "RespondPage": {
 "class": "SubmitData",
 "original_args": {
+"allowed_callers": [],
 "fail_ident": "home",
 "submit_list": [
 "setup",

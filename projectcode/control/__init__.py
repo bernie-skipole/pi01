@@ -5,45 +5,45 @@ from ... import FailPage, GoTo, ValidateError, ServerError
 from .. import database_ops, hardware
 
 
-def control_page(caller_ident, ident_list, submit_list, submit_dict, call_data, page_data, lang):
+def control_page(skicall):
     """Populate the control page, by setting widget values, and then the results values"""
     # display output description
-    page_data['output01_description', 'para_text'] = hardware.get_output_description('output01')
+    skicall.page_data['output01_description', 'para_text'] = hardware.get_output_description('output01')
     # widget output01 is boolean radio and expects a binary True, False value
-    page_data['output01', 'radio_checked'] = _get_output('output01')
+    skicall.page_data['output01', 'radio_checked'] = _get_output('output01')
     # further widgets for further outputs to be set here
     # finally fill in all results fields
-    refresh_results(caller_ident, ident_list, submit_list, submit_dict, call_data, page_data, lang)
+    refresh_results(skicall)
 
 
-def refresh_results(caller_ident, ident_list, submit_list, submit_dict, call_data, page_data, lang):
+def refresh_results(skicall):
     """Fill in the control page results fields"""
     if _get_output('output01'):
-        page_data['output01_result', 'para_text'] = "The current value of output 01 is : On"
+        skicall.page_data['output01_result', 'para_text'] = "The current value of output 01 is : On"
     else:
-        page_data['output01_result', 'para_text'] = "The current value of output 01 is : Off"
+        skicall.page_data['output01_result', 'para_text'] = "The current value of output 01 is : Off"
 
 
-def controls_json_api(caller_ident, ident_list, submit_list, submit_dict, call_data, page_data, lang):
+def controls_json_api(skicall):
     "Returns json dictionary of output names : output values, used by external api"
     controls = hardware.get_output_names()
     values = [ _get_output(name) for name in controls ]
     return collections.OrderedDict(zip(controls,values))
 
 
-def set_output_from_browser(caller_ident, ident_list, submit_list, submit_dict, call_data, page_data, lang):
+def set_output_from_browser(skicall):
     """sets given output, called from browser via web page"""
-    if ('output01', 'radio_checked') in call_data:
+    if ('output01', 'radio_checked') in skicall.call_data:
         # set output01
-        _set_output('output01', call_data['output01', 'radio_checked'])
+        _set_output('output01', skicall.call_data['output01', 'radio_checked'])
     # further elif statements could set further outputs if they are present in call_data
 
 
-def set_output(caller_ident, ident_list, submit_list, submit_dict, call_data, page_data, lang):
+def set_output(skicall):
     "External api call"
-    if 'received_data' not in submit_dict:
+    if 'received_data' not in skicall.submit_dict:
         return
-    received = submit_dict['received_data']
+    received = skicall.submit_dict['received_data']
     if ('name' in received) and ('value' in received):
         name = received['name']
         value = received['value']
@@ -51,15 +51,15 @@ def set_output(caller_ident, ident_list, submit_list, submit_dict, call_data, pa
         if name not in controls:
             return
         _set_output(name, value)
-        call_data['OUTPUT'] = name
+        skicall.call_data['OUTPUT'] = name
            
 
-def return_output(caller_ident, ident_list, submit_list, submit_dict, call_data, page_data, lang):
+def return_output(skicall):
     """{outputname:value} returned as a result of external api call,
            outputname should have previously been set in call_data['OUTPUT']"""
-    if 'OUTPUT' not in call_data:
+    if 'OUTPUT' not in skicall.call_data:
         return {}
-    outputname = call_data['OUTPUT']
+    outputname = skicall.call_data['OUTPUT']
     value = _get_output(outputname)
     if value is None:
         return {}
