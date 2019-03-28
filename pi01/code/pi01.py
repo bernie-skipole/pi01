@@ -2,7 +2,7 @@
 import os, sys
 
 
-from skipole import WSGIApplication, FailPage, GoTo, ValidateError, ServerError, set_debug
+from skipole import WSGIApplication, FailPage, GoTo, ValidateError, ServerError, set_debug, use_submit_list
 
 
 
