@@ -10,7 +10,7 @@
 
 import os, sqlite3, hashlib, random
 
-from .. import FailPage, GoTo, ValidateError, ServerError
+from skipole import FailPage, GoTo, ValidateError, ServerError
 
 from . import hardware
 
