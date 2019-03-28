@@ -4,3 +4,5 @@ syntax: glob
 *.pyc
 *~
 *.tar.gz
+skiadmin/*
+skis/*
