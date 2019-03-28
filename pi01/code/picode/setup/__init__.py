@@ -2,7 +2,7 @@
 
 import os
 
-from ... import FailPage, GoTo, ValidateError, ServerError
+from skipole import FailPage, GoTo, ValidateError, ServerError
 from ....skilift import get_projectfiles_dir
 
 from .. import login, database_ops
