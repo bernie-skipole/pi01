@@ -10,17 +10,7 @@ Initially the project is set with example inputs and outputs, and username 'admi
 
 You will need the python3 version of rpi.gpio
 
-To check if you have it, try
-
-sudo python3
-
-and then
-
-import RPi.GPIO as GPIO
-
-If this is accepted without errors, you are ok, if not, exit from python with ctrl-D and then install it using:
-
-sudo apt-get install python3-rpi.gpio
+To run pi01 you will need skipole installing, and some understanding of that framework.
 
 
 
